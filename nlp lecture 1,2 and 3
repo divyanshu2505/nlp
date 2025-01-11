@@ -1,0 +1,177 @@
+#data Acquition
+import tweepy
+# Autenticate with API keys
+auth = tweepy.OAuth1UserHandler('API_KEY','API_SECRET')
+api = tweepy.API(auth)
+
+# FETCH tweets
+tweets = api.search_tweets(q='Machine Learning',count=100)
+for tweet in tweets:
+    print(tweet.text)
+
+
+
+
+
+#text processing
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+import string
+
+# Sample text
+text = "Natural Language Processing is amazing! It's full of potential."
+
+# Step 1: Lowercasing
+text = text.lower()
+
+# Step 2: Tokenization
+tokens = word_tokenize(text)
+
+# Step 3: Remove Punctuation
+tokens = [word for word in tokens if word not in string.punctuation]
+
+# Step 4: Remove Stopwords
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
+tokens = [word for word in tokens if word not in stop_words]
+
+# Step 5: Stemming
+stemmer = PorterStemmer()
+stemmed_tokens = [stemmer.stem(word) for word in tokens]
+
+# Step 6: Lemmatization
+nltk.download('wordnet')
+lemmatizer = WordNetLemmatizer()
+lemmatized_tokens = [lemmatizer.lemmatize(word) for word in tokens]
+
+print("Original Tokens:", tokens)
+print("Stemmed Tokens:", stemmed_tokens)
+print("Lemmatized Tokens:", lemmatized_tokens)
+
+
+
+
+#feature engeneering
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+# Sample text
+corpus =[
+    "I love NLP.",
+    "NLP is amazing and fun.",
+    "Machine learning is part of NLP."
+]
+
+# Bag of words
+vectorizer = CountVectorizer()
+bow = vectorizer.fit_transform(corpus)
+print("Bag of words Representation:\n", bow.toarray())
+print("Feature Names", vectorizer.get_feature_names_out())
+
+# TF-IDF
+tfidf_vectorizer = TfidfVectorizer()
+tfidf = tfidf_vectorizer.fit_transform(corpus)
+print("\nTF-IDF Representation:\n", tfidf.toarray())
+print("Feature Names:", tfidf_vectorizer.get_feature_names_out())
+
+
+
+
+
+# Modelling
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrices import classification_report
+
+#sample data
+texts = ["I Love this product", "This is bad","I am Happy","I hate it","great experience"]
+labels = [1,0,1,0,1]
+
+#Text to Features (Bag of Words)
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(texts)
+
+#Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state)
+
+# Model training
+model = MultinomialNB()
+model.fit(X_train,y_train)
+
+# predictions
+y_pred = model.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+
+
+
+#Deployment
+from flask import Flask, request, jsonify
+import pickle
+
+# Load saved model
+model = pickle.load(open('sentiment_model.pkl', 'rb'))
+vectorizer = pickle.load(open('vectorizer.pkl','rb'))
+
+# Initialize Flask app
+app = Flask(_name_)
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.json
+    text = data['text']
+    features = vectorizer.transform([text])
+    prediction = model.predict(features)
+    sentiment = "Positive" if prediction[0]==1 else "Negative"
+    return jsonify({"sentiment": sentiment})
+if _name_== "_main_":
+    app.run(debug=True)
+
+
+
+
+
+# part of sppech
+# additional nlp tasks
+from nltk import pos_tag
+nltk.download('averaged_perceptron_tagger')
+
+pos_tags = pos_tag(word_tokens)
+print("POS Tags:", pos_tags)
+
+
+
+
+# sentiment analysis
+from textblob import TextBlob
+
+# Sentiment Analysis
+sentiment = TextBlob(text).sentiment
+print("Sentiment (Polarity, Subjectivity):", sentiment)
+
+
+
+
+#remove stopwords
+def remove_stopwords(text):
+    new_text = []
+
+    for word in text.split():
+        if word in stopwords.words('english'):
+            new_text.append('')
+        else:
+            new_text.append(word)
+    x = new_text[:]
+    new_text.clear()
+    return " ".join(x)
+
+
+
+
+# remove tag html
+import re
+def remove_html_tags(text):
+    pattern = re.compile("<.*?")
+    return pattern.sub(r'',text)
