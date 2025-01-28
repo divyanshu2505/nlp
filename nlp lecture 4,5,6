@@ -1,0 +1,195 @@
+# one hot encoding
+from sklearn.preprocessing import OneHotEncoder
+
+# Sample corpus
+corpus = ["I love NLP", "NLP is amazing"]
+
+# Splitting into words
+words = set(" ".join(corpus).split())
+
+# Vocabulary creation
+vocab = list(words)
+
+# One-hot encoding
+encoder = OneHotEncoder(sparse=False)
+one_hot = encoder.fit_transform([[word] for word in vocab])
+
+# Display result
+print("Vocabulary:", vocab)
+print("One-Hot Encoded Vectors:\n", one_hot)
+
+
+
+
+# bag of words
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Sample corpus
+corpus = ["I love NLP", "NLP is amazing and fun"]
+
+# Bag of Words representation
+vectorizer = CountVectorizer()
+bow_matrix = vectorizer.fit_transform(corpus)
+
+# Display results
+print("Vocabulary:", vectorizer.get_feature_names_out())
+print("Bag of Words Matrix:\n", bow_matrix.toarray())
+
+
+
+
+
+# N grams
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Sample text
+text = ["I love NLP and machine learning"]
+
+# Bi-Grams
+vectorizer = CountVectorizer(ngram_range=(2, 2))
+bigrams = vectorizer.fit_transform(text)
+print("Bi-Grams Vocabulary:", vectorizer.get_feature_names_out())
+print("Bi-Grams Matrix:\n", bigrams.toarray())
+
+
+
+
+
+# TF-IDF GRAMS
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Sample text
+corpus = ["I love NLP", "NLP is amazing", "I love machine learning"]
+
+# TF-IDF representation
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(corpus)
+
+print("Vocabulary:", vectorizer.get_feature_names_out())
+print("TF-IDF Matrix:\n", tfidf_matrix.toarray())
+
+
+
+
+
+
+# custom features
+import pandas as pd
+
+# Sample text
+text_data = ["I love NLP", "NLP is amazing", "I hate bugs"]
+
+# Custom Features
+def extract_features(text):
+    return {
+        "word_count": len(text.split()),
+        "char_count": len(text),
+        "contains_NLP": int("NLP" in text),
+    }
+
+# Applying to dataset
+features = [extract_features(text) for text in text_data]
+df = pd.DataFrame(features)
+print(df)
+
+
+
+
+
+
+# Word2Vec
+pip install gensim
+from gensim.models import Word2Vec
+
+# Sample corpus
+sentences = [
+    ["dog", "barks", "at", "cat"],
+    ["cat", "meows", "at", "dog"],
+    ["man", "loves", "his", "dog"],
+    ["woman", "adores", "her", "cat"],
+]
+
+# Training Word2Vec model
+model = Word2Vec(sentences, vector_size=50, window=3, min_count=1, sg=0)  # CBOW (sg=0)
+
+# Get vector for a word
+print("Vector for 'dog':\n", model.wv["dog"])
+
+# Find similar words
+print("Words similar to 'dog':", model.wv.most_similar("dog"))
+
+model_cbow = Word2Vec(sentences, vector_size=50, window=3, min_count=1, sg=0)  # sg=0 for CBOW
+print("CBOW: Words similar to 'dog':", model_cbow.wv.most_similar("dog"))
+
+model_skipgram = Word2Vec(sentences, vector_size=50, window=3, min_count=1, sg=1)  # sg=1 for Skip-Gram
+print("Skip-Gram: Words similar to 'dog':", model_skipgram.wv.most_similar("dog"))
+
+
+
+
+# part of speech
+pip install gensim
+pip install nltk
+
+import nltk
+from gensim.models import Word2Vec
+
+# Sample Game of Thrones text
+data = [
+    "Winter is coming",
+    "A Lannister always pays his debts",
+    "The night is dark and full of terrors",
+    "Valar Morghulis",
+    "The king in the north",
+]
+
+# Tokenizing sentences into words
+nltk.download('punkt')
+tokenized_data = [nltk.word_tokenize(sentence.lower()) for sentence in data]
+print("Tokenized Sentences:", tokenized_data)
+
+#Train Word2Vec Model (CBOW)
+# CBOW model
+cbow_model = Word2Vec(sentences=tokenized_data, vector_size=50, window=3, min_count=1, sg=0)  # sg=0 for CBOW
+
+# Example: Word embedding for 'winter'
+print("CBOW - Embedding for 'winter':", cbow_model.wv['winter'])
+
+# Similar words to 'winter'
+print("CBOW - Similar words to 'winter':", cbow_model.wv.most_similar('winter'))
+
+# Skip-Gram model
+skipgram_model = Word2Vec(sentences=tokenized_data, vector_size=50, window=3, min_count=1, sg=1)  # sg=1 for Skip-Gram
+
+# Example: Word embedding for 'winter'
+print("Skip-Gram - Embedding for 'winter':", skipgram_model.wv['winter'])
+
+# Similar words to 'winter'
+print("Skip-Gram - Similar words to 'winter':", skipgram_model.wv.most_similar('winter'))
+
+
+
+
+
+
+
+
+# nltk
+pip install nltk
+import nltk
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+
+# Sample sentence
+sentence = "The quick brown fox jumps over the lazy dog."
+
+# Tokenizing the sentence into words
+words = word_tokenize(sentence)
+
+# POS tagging the words
+tags = pos_tag(words)
+
+# Print the tagged words
+print(tags)
